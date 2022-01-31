@@ -10,9 +10,14 @@ except IndexError:
     print("No file selected")
 
 for p in droppedFile:
-    with open("1001.nc", 'r') as file:
+    with open(p, 'r') as file:
         lines = file.readlines()
 
+manual_file=False
+filename= "anothertest.nc"
+if manual_file == True:
+    with open(filename, 'r') as file:
+        lines = file.readlines()
 
 
 # Determine if each tool change has a tapping cycle or not
@@ -51,6 +56,10 @@ for tappingCycle in rigidTappingIndexes:
 
         if lines[readLine].find("S") != -1 and RPMFound == False:
             RPM = lines[readLine][lines[readLine].index('S')+1:].strip()
+            # print(RPM)
+            for word in RPM.split():
+                if word.isdigit():
+                    RPM = word
             RPM = Decimal(RPM)
             RPMFound = True
 
@@ -62,11 +71,18 @@ for tappingCycle in rigidTappingIndexes:
 
     # Pitch Calculation
     if feedPerRev == True:
-        iPitch = Feed
-        mPitch = Feed*25.4
+        if Feed != 0:
+            iPitch = Feed
+            mPitch = Feed*25.4
+        else:
+            iPitch, mPitch = "N/A","N/A"
+
     else:
-        iPitch = RPM/Feed
-        mPitch = Feed/RPM*Decimal("25.4")
+        if Feed != 0 and RPM != 0:
+            iPitch = RPM/Feed
+            mPitch = Feed/RPM*Decimal("25.4")
+        else:
+            iPitch, mPitch = "N/A","N/A"
 
     # Convert all data into strings for table printing later
     data = {"ToolNum": Tool,
