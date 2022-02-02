@@ -1,4 +1,5 @@
 O100 (G84 R.H. Tapping Cycle)
+(http://www.helmancnc.com/g84-tapping-cycle-example-cnc-program/)
 N1 T18 M06
 N2 G90 G54 G00 X0.625 Y0.625
 N3 S500 M03
