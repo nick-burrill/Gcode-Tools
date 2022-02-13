@@ -7,29 +7,37 @@ from rich import print
 #       Copying files instead of moving
 #       Entries less than 1000 do not work
 
-partNumber = input("Enter a part number:")
-rootDir = "Fake Gcode"
+def copyPartFiles(partNumber, newDirectory):
+    rootDir = "Fake Gcode"
+    fileName = f"cgip{partNumber}"
+    folderName = f"{int(int(partNumber)/1000)}000s"
+    partDir = (f"{rootDir}/{folderName}/{fileName}.nc")
 
-fileName = f"cgip{partNumber}"
-folderName = f"{partNumber[0]}000"
-partDir = (f"{rootDir}/{folderName}/{fileName}.nc")
 
-print(f"Checking: {partDir}")
-files = []
-if os.path.isfile(f"{rootDir}/{folderName}/{fileName}.nc") == True:
-    files.append(f"{rootDir}/{folderName}/{fileName}.nc")
-    print("File found")
-    for i in range(10):
-        if os.path.isfile(f"{rootDir}/{folderName}/{fileName}-{i+1}.nc") == True:
-            files.append(f"{rootDir}/{folderName}/{fileName}-{i+1}.nc")
-        else:
-            print(f"Found {i+1} OPs")
-            break
-    print(files)
-else:
-    print("No files found!")
+    print(f"Checking: {partDir}")
+    filesToCopy = []
+    if os.path.isfile(partDir) == True:
+        filesToCopy.append(partDir)
+        print("File found")
+        
+        for i in range(9):
+            print(f"{partDir[:-3]}-{i+1}.nc")
+            if os.path.isfile(f"{partDir[:-3]}-{i+1}.nc") == True:
+                filesToCopy.append(f"{partDir[:-3]}-{i+1}.nc")
+            else:
+                print(f"Found {i+1} OPs")
+                break
+        print(filesToCopy)
+    else:
+        print("No files found!")
 
-for j in files:
-    newFileName = j[16:] # Jank af
-    print(f"Moved file: {newFileName}!")
-    shutil.move(j,f"Fake USB/{newFileName}")
+    for j in filesToCopy:
+        newFileName = j.split('/')[2]
+        shutil.move(j,f"Fake USB/{newFileName}")
+        print(f"Moved file: {newFileName}!")
+
+while True:
+    partNumber = "Not a number"
+    while partNumber.isnumeric() == False:
+        partNumber = input("Enter a part number:")
+    copyPartFiles(partNumber,False)
